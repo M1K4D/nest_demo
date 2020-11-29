@@ -11,6 +11,12 @@ export class UsersController {
     async getuser() {
         return this.userService.getUser();
     }
+
+    @Get('get')
+    async get(){
+        
+    }
+
     @Post('/adduser')
     @UsePipes(new ValidationPipe())
     async addUser(

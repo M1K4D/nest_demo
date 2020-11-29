@@ -1,4 +1,5 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { getConnection, Repository } from 'typeorm';
 import { userDto } from './dto/user.dto';
 import { userData } from './usersdata.entity';
 
@@ -17,35 +18,55 @@ export class UsersService {
         } catch (error) {
             throw new NotFoundException({
                 success: false,
-                message: error.message
+                message: error.message,
+                data: USER_DATA,
             })
 
         }
 
     }
 
-    async addUser(body: userDto) {
-        try {
-            const { username, title, password } = body;
-            const find = USER_DATA.find(e => e.username === username)
-            if (find) throw new Error(`username ${username} is duplicate`)
+    // async Get(){
+    //     try {
+    //         const data = await this.userRepository.find({
+    //             select: ['id', 'username', 'title','password'],
+    //           });
+        
+    //           return data;
+    //     } catch (error) {
+            
+    //     }
+    // }
 
-            USER_DATA.push({
-                id: USER_DATA.length + 1,
-                username: username,
-                title: title,
-                password: password,
-            })
-            return {
-                success: true,
-                message: 'add sucess',
-                data: USER_DATA
-            }
-        } catch (error) {
-            throw new NotFoundException({
+    async addUser(body: userDto) {
+        const connection = getConnection();
+        const queryRunner = connection.createQueryRunner();
+        await queryRunner.connect();
+        await queryRunner.startTransaction();
+        let err = '';
+        const { username, title, password } = body;
+        const user = new userData();
+        user.username = username
+        user.title = title
+        user.password = password
+        await queryRunner.manager.save(user);
+        try {
+            await queryRunner.commitTransaction();
+          } catch (error) {
+            console.log('error message ::', error.message);
+            await queryRunner.rollbackTransaction();
+            err = error.message;
+          } finally {
+            await queryRunner.release();
+            if (err)
+              throw new BadRequestException({
                 success: false,
-                message: error.message
-            })
+                message: err,
+              });
+            return {
+              success: true,
+              message: 'add success',
+            }
         }
     }
 
