@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { userDto } from './dto/user.dto';
 import { userData } from './usersdata.entity';
 
 let USER_DATA: userData[] = []
@@ -23,7 +24,7 @@ export class UsersService {
 
     }
 
-    async addUser(body: any) {
+    async addUser(body:userDto) {
         try {
             const { username, title, password } = body;
             const find = USER_DATA.find(e => e.username === username)
@@ -48,13 +49,17 @@ export class UsersService {
         }
     }
 
-    async updateUser(id: number, body: any) {
+    async updateUser(id: number, body:userDto) {
         try {
             const { username, title, password } = body;
             // console.log(id)
             const found = USER_DATA.find(value => value.id == id)
             if (!found) throw new Error(`${id} not found `)
-            // console.log(found)
+            const fil = USER_DATA.filter(value => value.id != id)
+            const fil_username = USER_DATA.filter(value => value.id != id)
+            const fil_dup = fil_username.find(value => value.username === username)
+            if (fil_dup) throw new Error(`username ${username} is duplicate`)
+            console.log(fil)
             found.username = username
             found.title = title
             found.password = password

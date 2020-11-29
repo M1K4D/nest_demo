@@ -1,7 +1,8 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Put, UsePipes, ValidationPipe } from '@nestjs/common';
 import { UsersService } from './users.service'
 import { promises } from 'fs';
 import { from } from 'rxjs';
+import { userDto } from './dto/user.dto';
 
 @Controller('users')
 export class UsersController {
@@ -11,14 +12,16 @@ export class UsersController {
         return this.userService.getUser();
     }
     @Post('/adduser')
+    @UsePipes(new ValidationPipe())
     async addUser(
-        @Body() body: UsersService
+        @Body() body:userDto
     ) {
         return this.userService.addUser(body);
     }
 
     @Patch('/:id/update')
-    async updateUser(@Param('id', ParseIntPipe) id: number, @Body() body: any) {
+    @UsePipes(new ValidationPipe())
+    async updateUser(@Param('id', ParseIntPipe) id: number, @Body() body: userDto) {
         // console.log(body)
         return this.userService.updateUser(id, body)
     }
