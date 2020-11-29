@@ -14,7 +14,7 @@ export class UsersController {
     @Post('/adduser')
     @UsePipes(new ValidationPipe())
     async addUser(
-        @Body() body:userDto
+        @Body() body: userDto
     ) {
         return this.userService.addUser(body);
     }

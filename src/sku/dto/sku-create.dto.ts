@@ -11,8 +11,8 @@ export class SkuCreateDto {
 
     @IsString()
     @IsNotEmpty()
-    owner_product:string;
+    owner_product: string;
 
     @IsNumber()
-    quantity:number;
+    quantity: number;
 }

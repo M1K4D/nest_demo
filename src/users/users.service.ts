@@ -24,7 +24,7 @@ export class UsersService {
 
     }
 
-    async addUser(body:userDto) {
+    async addUser(body: userDto) {
         try {
             const { username, title, password } = body;
             const find = USER_DATA.find(e => e.username === username)
@@ -39,7 +39,7 @@ export class UsersService {
             return {
                 success: true,
                 message: 'add sucess',
-                data : USER_DATA
+                data: USER_DATA
             }
         } catch (error) {
             throw new NotFoundException({
@@ -49,7 +49,7 @@ export class UsersService {
         }
     }
 
-    async updateUser(id: number, body:userDto) {
+    async updateUser(id: number, body: userDto) {
         try {
             const { username, title, password } = body;
             // console.log(id)
@@ -77,10 +77,10 @@ export class UsersService {
         }
     }
 
-    async delete(id:number){
+    async delete(id: number) {
         try {
             const found = USER_DATA.find(value => value.id == id)
-            if (!found) throw new Error(`${id} not found `)
+            if (!found) throw new Error(`${id} not found`)
             USER_DATA = USER_DATA.filter(value => value.id != id)
             return {
                 success: true,
