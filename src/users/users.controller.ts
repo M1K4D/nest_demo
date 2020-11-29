@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Put } from '@nestjs/common';
 import { UsersService } from './users.service'
 import { promises } from 'fs';
 import { from } from 'rxjs';
@@ -10,10 +10,21 @@ export class UsersController {
     async getuser() {
         return this.userService.getUser();
     }
-    @Post()
+    @Post('/adduser')
     async addUser(
         @Body() body: UsersService
     ) {
         return this.userService.addUser(body);
+    }
+
+    @Patch('/:id/update')
+    async updateUser(@Param('id', ParseIntPipe) id: number, @Body() body: any) {
+        // console.log(body)
+        return this.userService.updateUser(id, body)
+    }
+
+    @Delete('/:id/delete')
+    async deleteUser(@Param('id', ParseIntPipe) id: number) {
+        return this.userService.delete(id)
     }
 }
