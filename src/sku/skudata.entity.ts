@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn, Unique } from "typeorm";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn, Unique } from "typeorm";
+import { skuHis } from "./sku_his.entity";
 
 @Entity()
 export class skuData {
@@ -17,4 +18,7 @@ export class skuData {
 
     @Column()
     quantity: number
+
+    @OneToMany(() => skuHis,skuhis => skuhis.id_product)
+    skuhis:skuHis[];
 }

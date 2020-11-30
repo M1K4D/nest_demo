@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
+import { skuData } from "./skudata.entity";
 
 @Entity()
 export class skuHis {
@@ -6,8 +7,9 @@ export class skuHis {
     id: number;
 
     @Column()
-    sku_code: string
-
-    @Column()
     quantity: number
+
+    // @Column()
+    @ManyToOne(() => skuData,skudata => skudata.id)
+    id_product: skuData
 }

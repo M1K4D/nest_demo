@@ -31,14 +31,22 @@ export class SkuService {
         await queryRunner.connect();
         await queryRunner.startTransaction();
         let err = '';
+
         const { sku_code, sku_name, owner_product, quantity } = body;
+
         const skudata = new skuData();
-        // const skuhis = new skuHis();
+        const skuhis = new skuHis();
+
         skudata.sku_code = sku_code;
         skudata.sku_name = sku_name;
         skudata.owner_product = owner_product;
         skudata.quantity = quantity;
+
         await queryRunner.manager.save(skudata);
+        skuhis.id_product = skudata;
+        skuhis.quantity = quantity;
+        await queryRunner.manager.save(skuhis);
+        
         try {
             await queryRunner.commitTransaction();
         } catch (error) {
@@ -93,7 +101,7 @@ export class SkuService {
                 .where('sku_code = :sku_code', { sku_code: found.sku_code })
                 .execute();
             const skuhis = new skuHis();
-            skuhis.sku_code = sku_code
+            skuhis.id_product = found
             skuhis.quantity = quantity
             await queryRunner.manager.save(skuhis);
             try {
