@@ -1,42 +1,24 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { getConnection, Repository } from 'typeorm';
 import { userDto } from './dto/user.dto';
+import { UserRepository } from './user.repository';
 import { userData } from './usersdata.entity';
 
 let USER_DATA: userData[] = []
 
 @Injectable()
 export class UsersService {
-
+    constructor (private readonly user:UserRepository){}
     async getUser() {
         try {
-            if (!USER_DATA.length) throw new Error('no data')
-            return {
-                success: true,
-                data: USER_DATA,
-            }
+            const data = await this.user.find()
+            return data
         } catch (error) {
-            throw new NotFoundException({
-                success: false,
-                message: error.message,
-                data: USER_DATA,
-            })
-
+            
         }
-
     }
 
-    // async Get(){
-    //     try {
-    //         const data = await this.userRepository.find({
-    //             select: ['id', 'username', 'title','password'],
-    //           });
-        
-    //           return data;
-    //     } catch (error) {
-            
-    //     }
-    // }
+    
 
     async addUser(body: userDto) {
         const connection = getConnection();
