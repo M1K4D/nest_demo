@@ -22,8 +22,6 @@ export class UsersService {
         }
     }
 
-
-
     async addUser(body: userDto) {
         const connection = getConnection();
         const queryRunner = connection.createQueryRunner();

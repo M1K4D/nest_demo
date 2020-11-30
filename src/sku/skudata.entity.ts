@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn, Unique } from "typeorm";
 
 @Entity()
 export class skuData {
@@ -6,6 +6,7 @@ export class skuData {
     id: number;
 
     @Column()
+    // @Unique()
     sku_code: string
 
     @Column()
