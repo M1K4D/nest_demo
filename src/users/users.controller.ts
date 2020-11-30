@@ -12,11 +12,6 @@ export class UsersController {
         return this.userService.getUser();
     }
 
-    @Get('get')
-    async get(){
-        
-    }
-
     @Post('/adduser')
     @UsePipes(new ValidationPipe())
     async addUser(
@@ -25,15 +20,15 @@ export class UsersController {
         return this.userService.addUser(body);
     }
 
-    @Patch('/:id/update')
-    @UsePipes(new ValidationPipe())
-    async updateUser(@Param('id', ParseIntPipe) id: number, @Body() body: userDto) {
-        // console.log(body)
-        return this.userService.updateUser(id, body)
-    }
+    // @Patch('/:id/update')
+    // @UsePipes(new ValidationPipe())
+    // async updateUser(@Param('id', ParseIntPipe) id: number, @Body() body: userDto) {
+    //     // console.log(body)
+    //     return this.userService.updateUser(id, body)
+    // }
 
-    @Delete('/:id/delete')
-    async deleteUser(@Param('id', ParseIntPipe) id: number) {
-        return this.userService.delete(id)
-    }
+    // @Delete('/:id/delete')
+    // async deleteUser(@Param('id', ParseIntPipe) id: number) {
+    //     return this.userService.delete(id)
+    // }
 }

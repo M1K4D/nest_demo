@@ -6,21 +6,21 @@ import { SkuService } from './sku.service';
 export class SkuController {
     constructor(private skuService: SkuService) { }
 
-    @Get('getsku')
-    async getsku() {
-        return this.skuService.getSku();
-    }
+    // @Get('getsku')
+    // async getsku() {
+    //     return this.skuService.getSku();
+    // }
 
-    @Post('addsku')
-    @UsePipes(new ValidationPipe())
-    async addsku(@Body() body: SkuCreateDto) {
-        return this.skuService.addSku(body)
-    }
-    @Put(':id/updatesku')
-    async updateUser(
-        @Param('id', ParseIntPipe) id: number,
-        @Body() body: SkuCreateDto
-    ) {
-        return this.skuService.updateSku(id, body);
-    }
+    // @Post('addsku')
+    // @UsePipes(new ValidationPipe())
+    // async addsku(@Body() body: SkuCreateDto) {
+    //     return this.skuService.addSku(body)
+    // }
+    // @Put(':id/updatesku')
+    // async updateUser(
+    //     @Param('id', ParseIntPipe) id: number,
+    //     @Body() body: SkuCreateDto
+    // ) {
+    //     return this.skuService.updateSku(id, body);
+    // }
 }
