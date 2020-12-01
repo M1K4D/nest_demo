@@ -130,21 +130,21 @@ export class SkuService {
         }
     }
 
-    async removeSku(sku_code: string) {
-        const connection = getConnection();
-        const repository = connection.getRepository(skuData);
-        // const {sku_code} = 
-        try {
-            const find = await repository.findOne({ where: { sku_code: sku_code } })
-            if (!find) throw new Error(`sku code ${sku_code} not found`)
-            await repository.remove(find)
-        } catch (error) {
-            throw new NotFoundException({
-                success: false,
-                message: error.message,
-            });
-        }
-    }
+    // async removeSku(sku_code: string) {
+    //     const connection = getConnection();
+    //     const repository = connection.getRepository(skuData);
+    //     // const {sku_code} = 
+    //     try {
+    //         const find = await repository.findOne({ where: { sku_code: sku_code } })
+    //         if (!find) throw new Error(`sku code ${sku_code} not found`)
+    //         await repository.remove(find)
+    //     } catch (error) {
+    //         throw new NotFoundException({
+    //             success: false,
+    //             message: error.message,
+    //         });
+    //     }
+    // }
 
     async findreletion() {
         const connection = getConnection();

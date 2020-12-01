@@ -33,11 +33,6 @@ export class SkuController {
         return this.skuService.updateSku(sku_code, body);
     }
 
-    @Delete(':skucode/remove')
-    async remove(@Param('skucode') skucode: string) {
-        return this.skuService.removeSku(skucode)
-    }
-
     @Get('getreletion')
     async getRelation() {
         return this.skuService.findreletion()

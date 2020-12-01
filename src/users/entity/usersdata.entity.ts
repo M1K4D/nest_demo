@@ -11,7 +11,7 @@ export class userData {
   @Column()
   title: string;
 
-  @Column({ default: true })
+  @Column()
   password: string;
   
 }
