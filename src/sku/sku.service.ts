@@ -14,8 +14,12 @@ export class SkuService {
     constructor(private readonly sku: SkuRepository) { }
     async getSku() {
         try {
-            const data = this.sku.find()
-            return data
+            const find = this.sku.find()
+            const data = [...await find]
+            return {
+                success: true,
+                data: data
+            }
         } catch (error) {
             console.log('error message ::', error.message);
             throw new NotFoundException({
@@ -89,7 +93,7 @@ export class SkuService {
             }
         }
     }
-    
+
     async updateSku(id: number, body: any) {
         const connection = getConnection();
         const queryRunner = connection.createQueryRunner();
