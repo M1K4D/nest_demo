@@ -90,21 +90,21 @@ export class SkuService {
         }
     }
 
-    async updateSku(id: number, body: SkuCreateDto) {
+    async updateSku(id: number, body: any) {
         const connection = getConnection();
         const queryRunner = connection.createQueryRunner();
         await queryRunner.connect();
         await queryRunner.startTransaction();
         let err = '';
         try {
-            const { sku_code, sku_name, owner_product, quantity } = body;
+            const { quantity } = body;
             const found = await this.sku.findOne({ where: { id: id } })
             if (!found) throw new Error('not found sku code.');
             if (found.quantity + quantity < 0) throw new Error(`quantity not enough`)
             await getConnection()
                 .createQueryBuilder()
                 .update(skuData)
-                .set({ owner_product: owner_product, quantity: found.quantity + quantity })
+                .set({quantity: found.quantity + quantity })
                 .where('id = :id', { id: found.id })
                 .execute();
             const skuhis = new skuHis();

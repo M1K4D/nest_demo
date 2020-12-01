@@ -28,7 +28,7 @@ export class SkuController {
     @Put(':id/updatesku')
     async updateUser(
         @Param('id') id,
-        @Body() body: SkuCreateDto
+        @Body() body: ParseIntPipe
     ) {
         // console.log(sku_code)
         return this.skuService.updateSku(id, body);
