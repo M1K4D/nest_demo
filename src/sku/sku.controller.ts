@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, ParseIntPipe, Post, Put, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, UsePipes, ValidationPipe } from '@nestjs/common';
 import { SkuCreateDto } from './dto/sku-create.dto';
 import { SkuService } from './sku.service';
 
@@ -31,5 +31,15 @@ export class SkuController {
     ) {
         console.log(sku_code)
         return this.skuService.updateSku(sku_code, body);
+    }
+
+    @Delete(':skucode/remove')
+    async remove(@Param('skucode') skucode: string) {
+        return this.skuService.removeSku(skucode)
+    }
+
+    @Get('getreletion')
+    async getRelation() {
+        return this.skuService.findreletion()
     }
 }

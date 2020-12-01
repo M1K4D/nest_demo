@@ -33,21 +33,27 @@ export class SkuService {
         let err = '';
 
         const { sku_code, sku_name, owner_product, quantity } = body;
+        const find = await this.sku.findOne({ where: { sku_code: sku_code } })
+        if (find) {
+            return {
+                success: false,
+                message: `sku code ${sku_code} is duplicate`
+            }
+        }
 
         const skudata = new skuData();
         const skuhis = new skuHis();
 
-        skudata.sku_code = sku_code;
-        skudata.sku_name = sku_name;
-        skudata.owner_product = owner_product;
-        skudata.quantity = quantity;
-
-        await queryRunner.manager.save(skudata);
-        skuhis.id_product = skudata;
-        skuhis.quantity = quantity;
-        await queryRunner.manager.save(skuhis);
-
         try {
+            skudata.sku_code = sku_code;
+            skudata.sku_name = sku_name;
+            skudata.owner_product = owner_product;
+            skudata.quantity = quantity;
+            await queryRunner.manager.save(skudata);
+
+            skuhis.id_product = skudata;
+            skuhis.quantity = quantity;
+            await queryRunner.manager.save(skuhis);
             await queryRunner.commitTransaction();
         } catch (error) {
             console.log('error message ::', error.message);
@@ -94,10 +100,11 @@ export class SkuService {
             const { quantity } = body;
             const found = await this.sku.findOne({ where: { sku_code: sku_code } })
             if (!found) throw new Error('not found sku code.');
+            if (found.quantity + quantity < 0) throw new Error(`quantity not enough`)
             await getConnection()
                 .createQueryBuilder()
                 .update(skuData)
-                .set({ quantity: quantity })
+                .set({ quantity: found.quantity + quantity })
                 .where('sku_code = :sku_code', { sku_code: found.sku_code })
                 .execute();
             const skuhis = new skuHis();
@@ -109,7 +116,6 @@ export class SkuService {
             } catch (error) {
                 console.log('error message ::', error.message);
                 await queryRunner.rollbackTransaction();
-                err = error.message;
             }
             await queryRunner.release();
             return {
@@ -123,4 +129,46 @@ export class SkuService {
             })
         }
     }
+
+    async removeSku(sku_code: string) {
+        const connection = getConnection();
+        const repository = connection.getRepository(skuData);
+        // const {sku_code} = 
+        try {
+            const find = await repository.findOne({ where: { sku_code: sku_code } })
+            if (!find) throw new Error(`sku code ${sku_code} not found`)
+            await repository.remove(find)
+        } catch (error) {
+            throw new NotFoundException({
+                success: false,
+                message: error.message,
+            });
+        }
+    }
+
+    async findreletion() {
+        const connection = getConnection();
+        const userRepository = connection.getRepository(skuData);
+        try {
+            // const skus = await userRepository.find({ relations: ["skudata"] });
+
+            const skus = await connection
+                .getRepository(skuData)
+                .createQueryBuilder('skudata')
+                .leftJoinAndSelect('skudata.skuhis', 'skuhis')
+                .getMany()
+
+            if (!skus) throw new Error(`not found`)
+            return {
+                success: true,
+                data: skus
+            }
+        } catch (error) {
+            throw new NotFoundException({
+                success: false,
+                message: error.message,
+            });
+        }
+    }
+
 }
