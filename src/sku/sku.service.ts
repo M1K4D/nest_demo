@@ -73,11 +73,11 @@ export class SkuService {
         }
     }
 
-    async findone(sku_code: string) {
-        const find = await this.sku.findOne({ where: { sku_code: sku_code } })
+    async findone(id: number) {
+        const find = await this.sku.findOne({ where: { id: id } })
 
         try {
-            if (!find) throw new Error(`${sku_code} not found`)
+            if (!find) throw new Error(`${id} not found`)
             return {
                 success: true,
                 data: find
@@ -89,7 +89,7 @@ export class SkuService {
             }
         }
     }
-
+    
     async updateSku(id: number, body: any) {
         const connection = getConnection();
         const queryRunner = connection.createQueryRunner();
@@ -97,16 +97,44 @@ export class SkuService {
         await queryRunner.startTransaction();
         let err = '';
         try {
-            const { quantity } = body;
+            const { sku_code, sku_name, owner_product, quantity } = body;
             const found = await this.sku.findOne({ where: { id: id } })
             if (!found) throw new Error('not found sku code.');
             if (found.quantity + quantity < 0) throw new Error(`quantity not enough`)
-            await getConnection()
-                .createQueryBuilder()
-                .update(skuData)
-                .set({quantity: found.quantity + quantity })
-                .where('id = :id', { id: found.id })
-                .execute();
+            if (quantity) {
+                await getConnection()
+                    .createQueryBuilder()
+                    .update(skuData)
+                    .set({ quantity: found.quantity + quantity })
+                    .where('id = :id', { id: found.id })
+                    .execute();
+            }
+            if (sku_code) {
+                const found = await this.sku.findOne({ where: { sku_code: sku_code } })
+                if (found && found.id != id) throw new Error(`sku code ${sku_code} is duplicate`)
+                await getConnection()
+                    .createQueryBuilder()
+                    .update(skuData)
+                    .set({ sku_code: sku_code })
+                    .where('id = :id', { id: found.id })
+                    .execute();
+            }
+            if (sku_name) {
+                await getConnection()
+                    .createQueryBuilder()
+                    .update(skuData)
+                    .set({ sku_name: sku_name })
+                    .where('id = :id', { id: found.id })
+                    .execute();
+            }
+            if (owner_product) {
+                await getConnection()
+                    .createQueryBuilder()
+                    .update(skuData)
+                    .set({ owner_product: owner_product })
+                    .where('id = :id', { id: found.id })
+                    .execute();
+            }
             const skuhis = new skuHis();
             skuhis.id_product = found
             skuhis.quantity = quantity
@@ -116,12 +144,17 @@ export class SkuService {
             } catch (error) {
                 console.log('error message ::', error.message);
                 await queryRunner.rollbackTransaction();
+                err = error.message;
+            } finally {
+                await queryRunner.release();
+                if (err)
+                    console.log(err)
+                return {
+                    success: true,
+                    message: 'updated success',
+                }
             }
-            await queryRunner.release();
-            return {
-                success: true,
-                message: 'updated success.',
-            };
+
         } catch (error) {
             throw new BadRequestException({
                 success: false,
@@ -130,28 +163,9 @@ export class SkuService {
         }
     }
 
-    // async removeSku(sku_code: string) {
-    //     const connection = getConnection();
-    //     const repository = connection.getRepository(skuData);
-    //     // const {sku_code} = 
-    //     try {
-    //         const find = await repository.findOne({ where: { sku_code: sku_code } })
-    //         if (!find) throw new Error(`sku code ${sku_code} not found`)
-    //         await repository.remove(find)
-    //     } catch (error) {
-    //         throw new NotFoundException({
-    //             success: false,
-    //             message: error.message,
-    //         });
-    //     }
-    // }
-
-    async findreletion() {
-        const connection = getConnection();
-        const userRepository = connection.getRepository(skuData);
+    async findALL() {
         try {
-            // const skus = await userRepository.find({ relations: ["skudata"] });
-            const skus = await connection
+            const skus = await getConnection()
                 .getRepository(skuData)
                 .createQueryBuilder('skudata')
                 .leftJoinAndSelect('skudata.skuhis', 'skuhis')

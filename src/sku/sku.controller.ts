@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Put, UsePipes, ValidationPipe } from '@nestjs/common';
 import { SkuCreateDto } from './dto/sku-create.dto';
 import { SkuService } from './sku.service';
 
@@ -12,30 +12,27 @@ export class SkuController {
         return this.skuService.getSku();
     }
 
-    @Get(':skucode/findone')
-    // @UsePipes(new ValidationPipe())
-    async findone(@Param('skucode') sku_code: string) {
+    @Get(':id/findone')
+    async findone(@Param('id',ParseIntPipe) sku_code: number) {
         return this.skuService.findone(sku_code)
     }
 
     @Post('addsku')
-    // @UsePipes(new ValidationPipe())
     async addsku(@Body() body: SkuCreateDto) {
-        // console.log(body.quantity)
         return this.skuService.addSku(body)
     }
     
-    @Put(':id/updatesku')
+    @Patch(':id/updatesku')
     async updateUser(
         @Param('id') id,
-        @Body() body: ParseIntPipe
+        @Body() body: SkuCreateDto
     ) {
         // console.log(sku_code)
         return this.skuService.updateSku(id, body);
     }
 
-    @Get('getreletion')
-    async getRelation() {
-        return this.skuService.findreletion()
+    @Get('getall')
+    async getALL() {
+        return this.skuService.findALL()
     }
 }

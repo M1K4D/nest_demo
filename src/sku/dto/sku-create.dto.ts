@@ -2,15 +2,18 @@ import { IsEmail, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-valid
 
 export class SkuCreateDto {
     @IsString()
-    @IsNotEmpty()
+    // @IsNotEmpty()
+    @IsOptional()
     sku_code: string;
 
     @IsString()
-    @IsNotEmpty()
+    // @IsNotEmpty()
+    @IsOptional()
     sku_name: string;
 
     @IsString()
-    @IsNotEmpty()
+    // @IsNotEmpty()
+    @IsOptional()
     owner_product: string;
 
     @IsNumber()
