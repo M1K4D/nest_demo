@@ -1,42 +1,26 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { getConnection, Repository } from 'typeorm';
 import { userDto } from './dto/user.dto';
-import { userData } from './usersdata.entity';
+import { UserRepository } from './user.repository';
+import { userData } from './entity/usersdata.entity';
 
-let USER_DATA: userData[] = []
+// let USER_DATA: userData[] = []
 
 @Injectable()
 export class UsersService {
-
+    constructor(private readonly user: UserRepository) { }
     async getUser() {
         try {
-            if (!USER_DATA.length) throw new Error('no data')
-            return {
-                success: true,
-                data: USER_DATA,
-            }
+            const data = await this.user.find()
+            return data
         } catch (error) {
+            console.log('error message ::', error.message);
             throw new NotFoundException({
                 success: false,
                 message: error.message,
-                data: USER_DATA,
-            })
-
+            });
         }
-
     }
-
-    // async Get(){
-    //     try {
-    //         const data = await this.userRepository.find({
-    //             select: ['id', 'username', 'title','password'],
-    //           });
-
-    //           return data;
-    //     } catch (error) {
-
-    //     }
-    // }
 
     async addUser(body: userDto) {
         const connection = getConnection();
@@ -45,6 +29,13 @@ export class UsersService {
         await queryRunner.startTransaction();
         let err = '';
         const { username, title, password } = body;
+        const find = await this.user.findOne({ where: { username: username } })
+        if (find) {
+            return {
+                success: false,
+                message: `username ${username} is duplicate`
+            }
+        }
         const user = new userData();
         user.username = username
         user.title = title
@@ -70,48 +61,49 @@ export class UsersService {
         }
     }
 
-    async updateUser(id: number, body: userDto) {
-        try {
-            const { username, title, password } = body;
-            const found = USER_DATA.find(value => value.id == id)
-            if (!found) throw new Error(`${id} not found `)
-            const fil = USER_DATA.filter(value => value.id != id)
-            const fil_username = USER_DATA.filter(value => value.id != id)
-            const fil_dup = fil_username.find(value => value.username === username)
-            if (fil_dup) throw new Error(`username ${username} is duplicate`)
-            console.log(fil)
-            found.username = username
-            found.title = title
-            found.password = password
+    // async updateUser(id: number, body: userDto) {
+    //     try {
+    //         const { username, title, password } = body;
+    //         // console.log(id)
+    //         const found = USER_DATA.find(value => value.id == id)
+    //         if (!found) throw new Error(`${id} not found `)
+    //         const fil = USER_DATA.filter(value => value.id != id)
+    //         const fil_username = USER_DATA.filter(value => value.id != id)
+    //         const fil_dup = fil_username.find(value => value.username === username)
+    //         if (fil_dup) throw new Error(`username ${username} is duplicate`)
+    //         console.log(fil)
+    //         found.username = username
+    //         found.title = title
+    //         found.password = password
 
-            return {
-                success: true,
-                message: `${id} update sucess`,
-                data: USER_DATA
-            }
-        } catch (error) {
-            throw new NotFoundException({
-                success: false,
-                message: error.message
-            })
-        }
-    }
+    //         return {
+    //             success: true,
+    //             message: `${id} update sucess`,
+    //             data: USER_DATA
+    //         }
+    //     } catch (error) {
+    //         throw new NotFoundException({
+    //             success: false,
+    //             message: error.message
+    //         })
+    //     }
+    // }
 
-    async delete(id: number) {
-        try {
-            const found = USER_DATA.find(value => value.id == id)
-            if (!found) throw new Error(`${id} not found`)
-            USER_DATA = USER_DATA.filter(value => value.id != id)
-            return {
-                success: true,
-                message: `${id} delete succes`,
-                data: USER_DATA
-            }
-        } catch (error) {
-            throw new NotFoundException({
-                success: false,
-                message: error.message
-            })
-        }
-    }
+    // async delete(id: number) {
+    //     try {
+    //         const found = USER_DATA.find(value => value.id == id)
+    //         if (!found) throw new Error(`${id} not found`)
+    //         USER_DATA = USER_DATA.filter(value => value.id != id)
+    //         return {
+    //             success: true,
+    //             message: `${id} delete succes`,
+    //             data: USER_DATA
+    //         }
+    //     } catch (error) {
+    //         throw new NotFoundException({
+    //             success: false,
+    //             message: error.message
+    //         })
+    //     }
+    // }
 }

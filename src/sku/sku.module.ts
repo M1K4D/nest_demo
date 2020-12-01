@@ -1,9 +1,12 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { SkuController } from './sku.controller';
+import { SkuRepository } from './sku.repository';
 import { SkuService } from './sku.service';
 
 @Module({
+  imports: [TypeOrmModule.forFeature([SkuRepository])],
   controllers: [SkuController],
   providers: [SkuService]
 })
-export class SkuModule {}
+export class SkuModule { }
