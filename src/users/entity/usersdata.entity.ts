@@ -13,4 +13,5 @@ export class userData {
 
   @Column({ default: true })
   password: string;
+  
 }

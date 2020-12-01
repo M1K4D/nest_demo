@@ -2,7 +2,7 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { getConnection, Repository } from 'typeorm';
 import { userDto } from './dto/user.dto';
 import { UserRepository } from './user.repository';
-import { userData } from './usersdata.entity';
+import { userData } from './entity/usersdata.entity';
 
 // let USER_DATA: userData[] = []
 
@@ -29,6 +29,13 @@ export class UsersService {
         await queryRunner.startTransaction();
         let err = '';
         const { username, title, password } = body;
+        const find = await this.user.findOne({ where: { username: username } })
+        if (find) {
+            return {
+                success: false,
+                message: `username ${username} is duplicate`
+            }
+        }
         const user = new userData();
         user.username = username
         user.title = title

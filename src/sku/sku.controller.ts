@@ -29,7 +29,7 @@ export class SkuController {
         @Param('skucode') sku_code,
         @Body() body: SkuCreateDto
     ) {
-        console.log(sku_code)
+        // console.log(sku_code)
         return this.skuService.updateSku(sku_code, body);
     }
 

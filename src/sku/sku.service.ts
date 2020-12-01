@@ -151,7 +151,6 @@ export class SkuService {
         const userRepository = connection.getRepository(skuData);
         try {
             // const skus = await userRepository.find({ relations: ["skudata"] });
-
             const skus = await connection
                 .getRepository(skuData)
                 .createQueryBuilder('skudata')
