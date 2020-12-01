@@ -2,6 +2,7 @@ import { Column, Entity, OneToMany, PrimaryGeneratedColumn, Unique } from "typeo
 import { skuHis } from "./sku_his.entity";
 
 @Entity()
+// @Unique(['sku_code'])
 export class skuData {
     @PrimaryGeneratedColumn()
     id: number;

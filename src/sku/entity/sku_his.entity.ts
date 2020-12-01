@@ -7,9 +7,9 @@ export class skuHis {
     id: number;
 
     @Column()
-    quantity: number
+    quantity: number;
 
     // @Column()
-    @ManyToOne(() => skuData,skudata => skudata.id)
-    id_product: skuData
+    @ManyToOne(() => skuData, skudata => skudata.id)
+    id_product: skuData;
 }

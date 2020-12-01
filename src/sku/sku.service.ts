@@ -2,8 +2,8 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { getConnection } from 'typeorm';
 import { SkuCreateDto } from './dto/sku-create.dto';
 import { SkuRepository } from './sku.repository';
-import { skuData } from './skudata.entity';
-import { skuHis } from './sku_his.entity';
+import { skuData } from './entity/skudata.entity';
+import { skuHis } from './entity/sku_his.entity';
 
 // const SKU_DATA = [
 //     { id: 1, sku_code: 'xz000', sku_name: 'testp', owner_product: 'kiki', quantity: 0 },
@@ -46,7 +46,7 @@ export class SkuService {
         skuhis.id_product = skudata;
         skuhis.quantity = quantity;
         await queryRunner.manager.save(skuhis);
-        
+
         try {
             await queryRunner.commitTransaction();
         } catch (error) {
