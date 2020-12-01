@@ -24,7 +24,7 @@ export class SkuController {
         // console.log(body.quantity)
         return this.skuService.addSku(body)
     }
-
+    
     @Put(':id/updatesku')
     async updateUser(
         @Param('id') id,
