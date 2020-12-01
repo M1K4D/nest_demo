@@ -31,10 +31,10 @@ export class UsersService {
     //         const data = await this.userRepository.find({
     //             select: ['id', 'username', 'title','password'],
     //           });
-        
+
     //           return data;
     //     } catch (error) {
-            
+
     //     }
     // }
 
@@ -52,20 +52,20 @@ export class UsersService {
         await queryRunner.manager.save(user);
         try {
             await queryRunner.commitTransaction();
-          } catch (error) {
+        } catch (error) {
             console.log('error message ::', error.message);
             await queryRunner.rollbackTransaction();
             err = error.message;
-          } finally {
+        } finally {
             await queryRunner.release();
             if (err)
-              throw new BadRequestException({
-                success: false,
-                message: err,
-              });
+                throw new BadRequestException({
+                    success: false,
+                    message: err,
+                });
             return {
-              success: true,
-              message: 'add success',
+                success: true,
+                message: 'add success',
             }
         }
     }
@@ -73,7 +73,6 @@ export class UsersService {
     async updateUser(id: number, body: userDto) {
         try {
             const { username, title, password } = body;
-            // console.log(id)
             const found = USER_DATA.find(value => value.id == id)
             if (!found) throw new Error(`${id} not found `)
             const fil = USER_DATA.filter(value => value.id != id)
